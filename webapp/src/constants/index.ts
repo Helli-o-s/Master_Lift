@@ -12,7 +12,7 @@ export const products = [
     desc: 'Premium passenger and freight solutions.',
     fullDesc: 'Our flagship vertical mobility solutions, designed for safety, speed, and architectural harmony. We offer comprehensive solutions from MR (Machine Room) to MRL (Machine Room-Less) configurations tailored to specific building requirements.',
     features: ['Custom Cabin Designs', 'Energy-efficient VVVF drives', 'Advanced seismic and fire protections', 'Panoramic glass options'],
-    imageUrl: '/images/elevators.png'
+    imageUrl: '/images/elevators.webp'
   },
   { 
     id: 'escalators', 
@@ -20,7 +20,7 @@ export const products = [
     desc: 'High-capacity vertical mobility.',
     fullDesc: 'Heavy-duty escalators engineered for high-traffic environments like malls, airports, and commercial centers. Designed for continuous 24/7 operation with intelligent energy-saving sleep modes.',
     features: ['Heavy-duty truss structure', 'Auto-lubrication systems', 'Anti-slip aluminum steps', 'Radar motion sensors'],
-    imageUrl: '/images/escalators.png'
+    imageUrl: '/images/escalators.webp'
   },
   { 
     id: 'travelators', 
@@ -28,7 +28,7 @@ export const products = [
     desc: 'Seamless horizontal transport.',
     fullDesc: 'Smooth, inclined and horizontal moving walkways ideal for airports and hypermarkets ensuring effortless transport of passengers with heavy luggage or shopping carts.',
     features: ['Low-profile pallet designs', 'Synchronized handrail drives', 'Toughened glass balustrades', 'High-load capacity structure'],
-    imageUrl: '/images/travelators.png'
+    imageUrl: '/images/travelators.webp'
   },
   { 
     id: 'dumbwaiters', 
@@ -36,7 +36,7 @@ export const products = [
     desc: 'Efficient compact lifts.',
     fullDesc: 'Small freight elevators specifically designed for restaurants, hospitals, and multi-level residences to quickly and safely transport food, documents, and medical supplies.',
     features: ['Stainless steel cabin hygiene', 'Rope or chain driven options', 'Bi-parting vertical doors', 'Custom shelf configurations'],
-    imageUrl: '/images/dumbwaiters.png'
+    imageUrl: '/images/dumbwaiters.webp'
   },
   { 
     id: 'cradles', 
@@ -44,7 +44,7 @@ export const products = [
     desc: 'Safe facade access solutions.',
     fullDesc: 'Building Maintenance Units (BMUs) and suspended cradles engineered for reliable and safe exterior high-rise window cleaning and facade maintenance access.',
     features: ['Roof-mounted track systems', 'Davit arm and jib configurations', 'Multi-layer wire rope safety', 'Wind-resistant stabilizations'],
-    imageUrl: '/images/cradles.png'
+    imageUrl: '/images/cradles.webp'
   }
 ];
 
@@ -52,26 +52,26 @@ export const services = [
   { 
     title: 'Maintenance Services', 
     desc: "We don't just maintain; we elevate experiences. Your safety and satisfaction are our top priorities in every ascent and descent.",
-    imageUrl: '/images/services/maintenance.png'
+    imageUrl: '/images/services/maintenance.webp'
   },
   { 
     title: 'Repair Services', 
     desc: "Repairing not just components, but trust – where every service is a step towards elevating satisfaction.",
-    imageUrl: '/images/services/repair.png'
+    imageUrl: '/images/services/repair.webp'
   },
   { 
     title: 'Modernization & Upgrades', 
     desc: "Step into the future with our modernization services, where every upgrade is a stride towards smarter, safer, and more efficient vertical mobility.",
-    imageUrl: '/images/services/modernization.png'
+    imageUrl: '/images/services/modernization.webp'
   },
   { 
     title: 'Installation', 
     desc: "Step into a world where installation is an art form – a meticulous craft that shapes spaces, connects stories, and lays the foundation for a journey defined by excellence and innovation.",
-    imageUrl: '/images/services/installation.png'
+    imageUrl: '/images/services/installation.webp'
   },
   { 
     title: 'Custom Cab Interiors', 
     desc: 'Bespoke designs offering the best quality services with competitive price.',
-    imageUrl: '/images/services/custom_cab.png'
+    imageUrl: '/images/services/custom_cab.webp'
   }
 ];

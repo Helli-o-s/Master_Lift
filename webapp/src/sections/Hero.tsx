@@ -1,11 +1,21 @@
-import { Suspense } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
+import { OrbitControls, Environment, ContactShadows, Lightformer } from '@react-three/drei';
 import { ElevatorModel } from '../canvas/ElevatorModel';
 import { Button } from '../components/ui/Button';
 import { motion } from 'framer-motion';
 
 export const Hero = () => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Defer 3D evaluation to a macro-task so the main thread can paint the HTML instantly (fixes 20s LCP).
+    const timer = setTimeout(() => setMounted(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
     <section id="hero" className="relative min-h-screen pt-24 bg-background overflow-hidden flex items-center">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
@@ -67,27 +77,40 @@ export const Hero = () => {
         <div className="relative h-[38vh] sm:h-[44vh] lg:h-[80vh] w-full mt-8 lg:mt-0 touch-none">
           <div className="absolute inset-0 bg-gradient-to-tr from-slate-100 to-transparent rounded-[2rem] rounded-bl-[6rem] opacity-50 pointer-events-none" />
           
-          <Canvas camera={{ position: [5, 2, 5], fov: 45 }}>
-            <ambientLight intensity={0.5} />
-            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
-            <pointLight position={[-10, -10, -10]} intensity={0.5} color="#0f172a" />
-            <pointLight position={[0, -5, 0]} intensity={2} color="#E60000" distance={10} />
-            
-            <Suspense fallback={null}>
-              <ElevatorModel />
-              <Environment preset="city" />
-              <ContactShadows position={[0, -4.5, 0]} opacity={0.4} scale={20} blur={2} far={4.5} />
-            </Suspense>
-            
-            <OrbitControls 
-              enableZoom={false} 
-              enablePan={false}
-              minPolarAngle={Math.PI / 4}
-              maxPolarAngle={Math.PI / 2}
-              autoRotate
-              autoRotateSpeed={0.5}
-            />
-          </Canvas>
+          {mounted && (
+            <Canvas 
+              camera={{ position: [5, 2, 5], fov: 45 }}
+              dpr={isMobile ? 1 : [1, 2]}
+              gl={{ antialias: !isMobile, powerPreference: "high-performance" }}
+            >
+              <ambientLight intensity={0.5} />
+              <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
+              <pointLight position={[-10, -10, -10]} intensity={0.5} color="#0f172a" />
+              <pointLight position={[0, -5, 0]} intensity={2} color="#E60000" distance={10} />
+              
+              <Suspense fallback={null}>
+                <ElevatorModel />
+                <Environment resolution={128}>
+                  <group rotation={[-Math.PI / 2, 0, 0]}>
+                    <Lightformer intensity={1} rotation-x={Math.PI / 2} position={[0, 5, -9]} scale={[10, 10, 1]} />
+                    <Lightformer intensity={0.5} rotation-y={Math.PI / 2} position={[-5, 1, -1]} scale={[20, 0.5, 1]} />
+                    <Lightformer intensity={0.5} rotation-y={Math.PI / 2} position={[5, 1, -1]} scale={[20, 0.5, 1]} />
+                    <Lightformer intensity={1} rotation-y={-Math.PI / 2} position={[10, 1, 0]} scale={[20, 1, 1]} />
+                  </group>
+                </Environment>
+                <ContactShadows position={[0, -4.5, 0]} opacity={0.4} scale={20} blur={2} far={4.5} />
+              </Suspense>
+              
+              <OrbitControls 
+                enableZoom={false} 
+                enablePan={false}
+                minPolarAngle={Math.PI / 4}
+                maxPolarAngle={Math.PI / 2}
+                autoRotate
+                autoRotateSpeed={0.5}
+              />
+            </Canvas>
+          )}
         </div>
 
       </div>

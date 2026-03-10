@@ -1,8 +1,8 @@
 import { Suspense, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
+import { OrbitControls, Environment, ContactShadows, Lightformer } from '@react-three/drei';
 import { TechShowcase } from '../canvas/TechShowcase';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { ShieldCheck, Wrench, Cpu, TrendingUp, RotateCcw } from 'lucide-react';
 
 const FEATURES = [
@@ -31,6 +31,12 @@ const FEATURES = [
 export const R3FShowcase = () => {
   const [autoRotate, setAutoRotate] = useState(true);
   const controlsRef = useRef<{ reset: () => void } | null>(null);
+  
+  // Defer rendering 3D until user scrolls close to it to save massive JS payload upfront
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: true, margin: "300px" });
+
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   return (
     <section className="py-16 md:py-24 lg:py-28 bg-secondary text-white relative overflow-hidden">
@@ -123,35 +129,48 @@ export const R3FShowcase = () => {
             className="relative order-1 lg:order-2"
           >
             {/* Canvas container */}
-            <div className="relative w-full h-[300px] sm:h-[380px] md:h-[440px] lg:h-[520px] bg-slate-900/60 rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+            <div ref={containerRef} className="relative w-full h-[300px] sm:h-[380px] md:h-[440px] lg:h-[520px] bg-slate-900/60 rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
 
               {/* Radial glow behind model */}
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(230,0,0,0.12)_0%,_transparent_70%)] pointer-events-none" />
 
-              <Canvas camera={{ position: [0, 1.5, 6], fov: 42 }}>
-                <ambientLight intensity={0.4} />
-                <spotLight position={[6, 10, 6]} intensity={2.2} angle={0.4} penumbra={1} castShadow />
-                <spotLight position={[-6, 4, -4]} intensity={0.8} angle={0.6} penumbra={1} color="#4488cc" />
-                <pointLight position={[0, -3, 4]} intensity={0.9} color="#E60000" />
+              {isInView && (
+                <Canvas 
+                  camera={{ position: [0, 1.5, 6], fov: 42 }}
+                  dpr={isMobile ? 1 : [1, 2]}
+                  gl={{ antialias: !isMobile, powerPreference: "high-performance" }}
+                >
+                  <ambientLight intensity={0.4} />
+                  <spotLight position={[6, 10, 6]} intensity={2.2} angle={0.4} penumbra={1} castShadow />
+                  <spotLight position={[-6, 4, -4]} intensity={0.8} angle={0.6} penumbra={1} color="#4488cc" />
+                  <pointLight position={[0, -3, 4]} intensity={0.9} color="#E60000" />
 
-                <Suspense fallback={null}>
-                  <TechShowcase />
-                  <Environment preset="city" />
-                  <ContactShadows position={[0, -2, 0]} opacity={0.7} scale={14} blur={3} far={5} color="#000000" />
-                </Suspense>
+                  <Suspense fallback={null}>
+                    <TechShowcase />
+                    <Environment resolution={128}>
+                      <group rotation={[-Math.PI / 2, 0, 0]}>
+                        <Lightformer intensity={1} rotation-x={Math.PI / 2} position={[0, 5, -9]} scale={[10, 10, 1]} />
+                        <Lightformer intensity={0.5} rotation-y={Math.PI / 2} position={[-5, 1, -1]} scale={[20, 0.5, 1]} />
+                        <Lightformer intensity={0.5} rotation-y={Math.PI / 2} position={[5, 1, -1]} scale={[20, 0.5, 1]} />
+                        <Lightformer intensity={1} rotation-y={-Math.PI / 2} position={[10, 1, 0]} scale={[20, 1, 1]} />
+                      </group>
+                    </Environment>
+                    <ContactShadows position={[0, -2, 0]} opacity={0.7} scale={14} blur={3} far={5} color="#000000" />
+                  </Suspense>
 
-                <OrbitControls
-                  ref={controlsRef as any}
-                  autoRotate={autoRotate}
-                  autoRotateSpeed={1.0}
-                  enablePan={false}
-                  minDistance={3}
-                  maxDistance={10}
-                  minPolarAngle={Math.PI / 6}
-                  maxPolarAngle={Math.PI / 1.8}
-                  onStart={() => setAutoRotate(false)}
-                />
-              </Canvas>
+                  <OrbitControls
+                    ref={controlsRef as any}
+                    autoRotate={autoRotate}
+                    autoRotateSpeed={1.0}
+                    enablePan={false}
+                    minDistance={3}
+                    maxDistance={10}
+                    minPolarAngle={Math.PI / 6}
+                    maxPolarAngle={Math.PI / 1.8}
+                    onStart={() => setAutoRotate(false)}
+                  />
+                </Canvas>
+              )}
 
               {/* Drag hint badge */}
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-full text-xs text-white/70 pointer-events-none select-none">
