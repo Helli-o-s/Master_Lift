@@ -34,12 +34,12 @@ export const Footer = () => {
               className="flex items-center gap-2 mb-6 cursor-pointer"
               onClick={scrollToTop}
             >
-              <div className="w-10 h-10 bg-primary rounded flex items-center justify-center font-bold text-white text-xl tracking-tighter shadow-lg shadow-black/20">
-                ME
-              </div>
-              <div className="font-bold text-lg leading-tight text-white">
-                MASTER ELEVATOR<br/>
-                <span className="text-xs font-normal tracking-wide text-slate-400">TRADING CO. W.L.L.</span>
+              <div className="bg-white p-2 rounded-xl inline-flex w-fit shadow-lg shadow-black/20">
+                <img 
+                  src="/master_logo.webp" 
+                  alt="Master Elevator Logo" 
+                  className="h-14 sm:h-16 w-auto object-contain"
+                />
               </div>
             </div>
             <p className="text-sm leading-relaxed text-slate-400 mb-6">

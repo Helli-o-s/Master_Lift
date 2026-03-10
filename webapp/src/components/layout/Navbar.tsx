@@ -50,14 +50,12 @@ export const Navbar = () => {
             className="flex items-center gap-2 cursor-pointer relative z-50"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            <div className="w-10 h-10 bg-primary rounded shadow-lg flex items-center justify-center font-bold text-white text-xl tracking-tighter">
-              ME
-            </div>
-            <div className={cn(
-              "font-bold text-lg leading-tight transition-colors text-secondary"
-            )}>
-              MASTER ELEVATOR<br/>
-              <span className="text-xs font-normal tracking-wide opacity-80">TRADING CO. W.L.L.</span>
+            <div className="bg-white/95 backdrop-blur-sm p-1.5 rounded-xl shadow-lg border border-white/20">
+              <img 
+                src="/master_logo.webp" 
+                alt="Master Elevator Logo" 
+                className="h-10 sm:h-12 w-auto object-contain"
+              />
             </div>
           </div>
 

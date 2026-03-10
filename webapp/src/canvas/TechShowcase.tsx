@@ -1,454 +1,338 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Group } from 'three';
-import { Cylinder, Torus } from '@react-three/drei';
+import { Group, Mesh } from 'three';
+import { Cylinder } from '@react-three/drei';
 
 // ── Material presets ────────────────────────────────────────────────────────
-const DARK    = { color: '#111827', metalness: 0.88, roughness: 0.25 };
-const STEEL   = { color: '#a0b0c0', metalness: 0.95, roughness: 0.08 };
-const RED     = { color: '#E60000', metalness: 0.55, roughness: 0.20, clearcoat: 1.0 };
-const BRASS   = { color: '#c8a855', metalness: 0.90, roughness: 0.15 };
-
-const RUBBER  = { color: '#22252a', metalness: 0.05, roughness: 0.85 };
-const BOLT    = { color: '#606878', metalness: 0.80, roughness: 0.30 };
-
-/** Helper: array of evenly-spaced angles */
-const angleArr = (n: number) => [...Array(n)].map((_, i) => (i / n) * Math.PI * 2);
+const DARK_METAL  = { color: '#111827', metalness: 0.85, roughness: 0.3 };
+const STEEL       = { color: '#a0b0c0', metalness: 0.95, roughness: 0.2 };
+const BRUSHED_ALU = { color: '#cfd8dc', metalness: 0.8, roughness: 0.4 };
+const BRAND_RED   = { color: '#E60000', metalness: 0.5, roughness: 0.2, clearcoat: 1.0 };
+const BRAND_NAVY  = { color: '#0f172a', metalness: 0.6, roughness: 0.4 };
+const GLASS       = { color: '#1e293b', transparent: true, opacity: 0.4, metalness: 0.9, roughness: 0.1 };
+const ROPE_STEEL  = { color: '#808890', metalness: 1.0, roughness: 0.4 };
 
 export const TechShowcase = () => {
-  const groupRef    = useRef<Group>(null);
-  const sheaveRef   = useRef<Group>(null);
-  const armRef      = useRef<Group>(null);
+  const mainAssemRef = useRef<Group>(null);
+  const cabRef       = useRef<Group>(null);
+  const leftDoorRef  = useRef<Mesh>(null);
+  const rightDoorRef = useRef<Mesh>(null);
+  const sheaveRef    = useRef<Group>(null);
+  const copLightRef  = useRef<Mesh>(null);
 
-  const fanRef      = useRef<Group>(null);
-
-  useFrame((state, delta) => {
+  useFrame((state) => {
     const t = state.clock.elapsedTime;
 
-    // Gentle whole-assembly sway
-    if (groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(t * 0.22) * 0.18 + 0.4;
-      groupRef.current.position.y = Math.sin(t * 0.55) * 0.04;
+    // 1. Overall Assembly Sway (Very subtle architectural hum)
+    if (mainAssemRef.current) {
+      mainAssemRef.current.rotation.y = Math.sin(t * 0.1) * 0.1 + 0.3;
     }
 
-    // Sheave (main wheel) rotates
-    if (sheaveRef.current) sheaveRef.current.rotation.z -= delta * 0.65;
+    // 2. Elevator Motion Cycle (Travel up, stop, open doors, close doors, travel down)
+    const cycleTime = 12; // 12 second total cycle
+    const phase = t % cycleTime;
+    
+    let cabY = 0;
+    let doorOpenProgress = 0;
+    let sheaveRotation = 0;
 
-    // Brake arm oscillates slightly
-    if (armRef.current) armRef.current.rotation.z = Math.sin(t * 1.2) * 0.04;
+    if (phase < 4) {
+      // Phase 1: Going UP (0 to 4s)
+      const progress = phase / 4;
+      // Smooth step easing
+      const ease = progress * progress * (3 - 2 * progress);
+      cabY = -2 + ease * 4; // Travel from -2 to +2
+      sheaveRotation = ease * Math.PI * 4;
+    } else if (phase < 6) {
+      // Phase 2: Stopped at Top, Doors Opening (4 to 6s)
+      cabY = 2;
+      const progress = (phase - 4) / 2;
+      // Open doors (max open is 0.45 units)
+      doorOpenProgress = Math.min(progress * 1.5, 1) * 0.45;
+    } else if (phase < 8) {
+      // Phase 3: Stopped at Top, Doors Closing (6 to 8s)
+      cabY = 2;
+      const progress = (phase - 6) / 2;
+      doorOpenProgress = Math.max(1 - (progress * 1.5), 0) * 0.45;
+    } else if (phase < 12) {
+      // Phase 4: Going DOWN (8 to 12s)
+      const progress = (phase - 8) / 4;
+      const ease = progress * progress * (3 - 2 * progress);
+      cabY = 2 - ease * 4;
+      sheaveRotation = (1 - ease) * Math.PI * 4;
+    }
 
+    // Apply Cab Position
+    if (cabRef.current) cabRef.current.position.y = cabY;
 
+    // Apply Door Positions
+    if (leftDoorRef.current) leftDoorRef.current.position.x = -0.22 - doorOpenProgress;
+    if (rightDoorRef.current) rightDoorRef.current.position.x = 0.22 + doorOpenProgress;
 
-    // Fan spins fast
-    if (fanRef.current) fanRef.current.rotation.z -= delta * 5.0;
+    // Apply Drive Sheave Rotation
+    if (sheaveRef.current) sheaveRef.current.rotation.z = -sheaveRotation;
+
+    // Pulse COP Light when doors are open
+    if (copLightRef.current) {
+      if (doorOpenProgress > 0.1) {
+        // Copied the red brand color into an emissive pulse
+        const pulse = (Math.sin(t * 8) + 1) / 2;
+        (copLightRef.current.material as any).emissiveIntensity = 0.5 + pulse * 2.5;
+      } else {
+        (copLightRef.current.material as any).emissiveIntensity = 0.2;
+      }
+    }
   });
 
   return (
-    <group ref={groupRef} scale={1.1}>
+    <group ref={mainAssemRef} scale={1.2}>
 
       {/* ══════════════════════════════════════════════════════
-          BASEPLATE / MACHINE BEDPLATE
+          THE SHAFT INFRASTRUCTURE (Guide Rails & Brackets)
       ══════════════════════════════════════════════════════ */}
-      <mesh position={[0, -1.35, 0]}>
-        <boxGeometry args={[4.4, 0.16, 1.6]} />
-        <meshStandardMaterial {...DARK} />
-      </mesh>
-      {/* Anti-vibration pads */}
-      {([-1.8, 0, 1.8] as number[]).flatMap(x =>
-        ([-0.65, 0.65] as number[]).map((z, _i) => (
-          <mesh key={`${x}${z}`} position={[x, -1.44, z]}>
-            <boxGeometry args={[0.28, 0.1, 0.22]} />
-            <meshStandardMaterial {...RUBBER} />
-          </mesh>
-        ))
-      )}
-      {/* Anchor bolts */}
-      {([-2.0, -0.9, 0.9, 2.0] as number[]).flatMap(x =>
-        ([-0.62, 0.62] as number[]).map((z) => (
-          <mesh key={`bolt${x}${z}`} position={[x, -1.27, z]}>
-            <cylinderGeometry args={[0.04, 0.04, 0.22, 8]} />
-            <meshStandardMaterial {...BOLT} />
-          </mesh>
-        ))
-      )}
-
-      {/* ══════════════════════════════════════════════════════
-          MOTOR STATOR HOUSING (the large cylindrical body)
-      ══════════════════════════════════════════════════════ */}
-      <group position={[-0.8, 0, 0]}>
-        {/* Main stator drum */}
-        <Cylinder args={[0.72, 0.78, 1.55, 48]} rotation={[0, 0, Math.PI / 2]}>
-          <meshStandardMaterial {...DARK} />
-        </Cylinder>
-        {/* End cap – brake side */}
-        <Cylinder args={[0.72, 0.72, 0.09, 48]} position={[0.82, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <meshStandardMaterial {...DARK} />
-        </Cylinder>
-        {/* End cap – gearbox side */}
-        <Cylinder args={[0.72, 0.72, 0.09, 48]} position={[-0.82, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <meshStandardMaterial {...DARK} />
-        </Cylinder>
-        {/* Cooling fins (8 ribs) */}
-        {angleArr(8).map((a, i) => (
-          <mesh key={i} position={[0, Math.sin(a) * 0.8, Math.cos(a) * 0.8]} rotation={[a, 0, 0]}>
-            <boxGeometry args={[1.55, 0.06, 0.12]} />
-            <meshStandardMaterial {...DARK} />
-          </mesh>
-        ))}
-        {/* Stator terminal box */}
-        <mesh position={[0, 0.88, 0]}>
-          <boxGeometry args={[0.55, 0.22, 0.34]} />
-          <meshStandardMaterial color="#1a2535" metalness={0.7} roughness={0.35} />
+      <group position={[0, 0, 0]}>
+        {/* Main T-Rails (Left & Right) */}
+        <mesh position={[-1.1, 0, 0]}>
+          <boxGeometry args={[0.08, 10, 0.12]} />
+          <meshStandardMaterial {...STEEL} />
         </mesh>
-        {/* Mounting feet */}
-        {([-0.55, 0.55] as number[]).map((x) => (
-          <mesh key={x} position={[x, -0.84, 0]}>
-            <boxGeometry args={[0.22, 0.12, 0.9]} />
-            <meshStandardMaterial {...DARK} />
-          </mesh>
-        ))}
-      </group>
+        <mesh position={[1.1, 0, 0]}>
+          <boxGeometry args={[0.08, 10, 0.12]} />
+          <meshStandardMaterial {...STEEL} />
+        </mesh>
 
-      {/* ══════════════════════════════════════════════════════
-          TRACTION SHEAVE (the main rope wheel)
-      ══════════════════════════════════════════════════════ */}
-      <group ref={sheaveRef} position={[0.55, 0, 0]}>
-        {/* Rim */}
-        <Torus args={[0.88, 0.09, 16, 64]} rotation={[0, 0, Math.PI / 2]}>
-          <meshStandardMaterial {...STEEL} />
-        </Torus>
-        {/* Rope grooves (4) */}
-        {[-0.18, -0.06, 0.06, 0.18].map((x, i) => (
-          <mesh key={i} position={[x, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-            <torusGeometry args={[0.88, 0.035, 12, 64]} />
-            <meshStandardMaterial {...RUBBER} />
-          </mesh>
-        ))}
-        {/* Web disc */}
-        <Cylinder args={[0.82, 0.82, 0.05, 48]} rotation={[0, 0, Math.PI / 2]}>
-          <meshStandardMaterial {...STEEL} />
-        </Cylinder>
-        {/* Spokes (6) */}
-        {angleArr(6).map((a, i) => (
-          <mesh key={i} rotation={[a, Math.PI / 2, 0]}>
-            <boxGeometry args={[0.07, 1.56, 0.055]} />
-            <meshStandardMaterial {...STEEL} />
-          </mesh>
-        ))}
-        {/* Hub */}
-        <Cylinder args={[0.16, 0.16, 0.55, 24]} rotation={[0, 0, Math.PI / 2]}>
-          <meshStandardMaterial {...BRASS} />
-        </Cylinder>
-        {/* Hub bolts */}
-        {angleArr(6).map((a, i) => (
-          <mesh key={i} position={[0, Math.sin(a) * 0.28, Math.cos(a) * 0.28]} rotation={[0, 0, Math.PI / 2]}>
-            <cylinderGeometry args={[0.025, 0.025, 0.45, 8]} />
-            <meshStandardMaterial {...BOLT} />
-          </mesh>
-        ))}
-        {/* Hoist ropes passing over sheave */}
-        {[-0.18, -0.06, 0.06, 0.18].map((x, i) => (
-          <group key={i}>
-            <mesh position={[x, -0.88, 0.65]}>
-              <cylinderGeometry args={[0.018, 0.018, 1.3, 8]} />
-              <meshStandardMaterial color="#808890" metalness={1} roughness={0.05} />
+        {/* Rail Brackets (Wall Tie-ins) */}
+        {[-4, -2, 0, 2, 4].map((y, i) => (
+          <group key={`bracket-${i}`} position={[0, y, -0.6]}>
+            <mesh position={[-1.1, 0, 0.3]}>
+              <boxGeometry args={[0.15, 0.3, 0.6]} />
+              <meshStandardMaterial {...DARK_METAL} />
             </mesh>
-            <mesh position={[x, -0.88, -0.65]}>
-              <cylinderGeometry args={[0.018, 0.018, 1.3, 8]} />
-              <meshStandardMaterial color="#808890" metalness={1} roughness={0.05} />
+            <mesh position={[1.1, 0, 0.3]}>
+              <boxGeometry args={[0.15, 0.3, 0.6]} />
+              <meshStandardMaterial {...DARK_METAL} />
             </mesh>
           </group>
         ))}
+
+        {/* Pit Buffer Springs (Bottom) */}
+        <group position={[0, -4.5, 0]}>
+          <mesh position={[0, -0.2, 0]}>
+            <boxGeometry args={[1.5, 0.2, 1.5]} />
+            <meshStandardMaterial {...DARK_METAL} />
+          </mesh>
+          {[-0.5, 0.5].map((x, i) => (
+            <group key={`buffer-${i}`} position={[x, 0.2, 0]}>
+              <Cylinder args={[0.1, 0.1, 0.6, 16]}>
+                <meshStandardMaterial {...BRAND_RED} />
+              </Cylinder>
+              <Cylinder args={[0.12, 0.12, 0.05, 16]} position={[0, 0.3, 0]}>
+                <meshStandardMaterial color="#222" roughness={0.9} />
+              </Cylinder>
+            </group>
+          ))}
+        </group>
       </group>
 
+
       {/* ══════════════════════════════════════════════════════
-          ELECTROMAGNETIC DISC BRAKE
+          THE CABIN (Passenger Experience & Custom Interiors)
       ══════════════════════════════════════════════════════ */}
-      <group position={[1.46, 0, 0]}>
-        {/* Brake housing */}
-        <Cylinder args={[0.44, 0.50, 0.45, 32]} rotation={[0, 0, Math.PI / 2]}>
-          <meshStandardMaterial {...DARK} />
-        </Cylinder>
-        {/* Spring pack (visible when open) */}
-        {angleArr(6).map((a, i) => (
-          <mesh key={i} position={[0.24, Math.sin(a) * 0.28, Math.cos(a) * 0.28]}>
-            <cylinderGeometry args={[0.035, 0.035, 0.22, 8]} />
-            <meshStandardMaterial color="#667788" metalness={0.7} roughness={0.4} />
-          </mesh>
+      <group ref={cabRef}>
+        {/* Sling / Frame (The structural steel holding the cab) */}
+        <mesh position={[0, -1.05, 0]}>
+          <boxGeometry args={[2.0, 0.1, 1.6]} />
+          <meshStandardMaterial {...DARK_METAL} />
+        </mesh>
+        <mesh position={[0, 1.05, 0]}>
+          <boxGeometry args={[2.0, 0.1, 1.6]} />
+          <meshStandardMaterial {...DARK_METAL} />
+        </mesh>
+        {/* Side Stiles */}
+        <mesh position={[-0.95, 0, 0]}>
+          <boxGeometry args={[0.1, 2.0, 1.6]} />
+          <meshStandardMaterial {...DARK_METAL} />
+        </mesh>
+        <mesh position={[0.95, 0, 0]}>
+          <boxGeometry args={[0.1, 2.0, 1.6]} />
+          <meshStandardMaterial {...DARK_METAL} />
+        </mesh>
+
+        {/* Roller Guides (Shoes riding the rails) */}
+        {[-1.0, 1.0].map((y) => (
+          <group key={`rollers-${y}`} position={[0, y, 0]}>
+            <mesh position={[-1.05, 0, 0]}>
+              <boxGeometry args={[0.15, 0.2, 0.2]} />
+              <meshStandardMaterial {...BRAND_RED} />
+            </mesh>
+            <mesh position={[1.05, 0, 0]}>
+              <boxGeometry args={[0.15, 0.2, 0.2]} />
+              <meshStandardMaterial {...BRAND_RED} />
+            </mesh>
+          </group>
         ))}
-        {/* Brake disc */}
-        <Cylinder args={[0.36, 0.36, 0.06, 32]} position={[-0.26, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <meshStandardMaterial color="#444c58" metalness={0.9} roughness={0.2} />
-        </Cylinder>
-        {/* Arm lever */}
-        <group ref={armRef}>
-          <mesh position={[0, 0.55, 0]}>
-            <boxGeometry args={[0.32, 0.28, 0.09]} />
-            <meshStandardMaterial {...DARK} />
+
+        {/* The Glass Cab Shell */}
+        <mesh position={[0, 0, 0.05]}>
+          <boxGeometry args={[1.8, 2.0, 1.4]} />
+          <meshPhysicalMaterial {...GLASS} />
+        </mesh>
+
+        {/* Cab Interior Back Wall (Custom Panel) */}
+        <mesh position={[0, 0, -0.64]}>
+          <boxGeometry args={[1.78, 1.98, 0.02]} />
+          <meshStandardMaterial {...BRAND_NAVY} />
+        </mesh>
+
+        {/* Handrail */}
+        <mesh position={[0, -0.1, -0.6]} rotation={[0, 0, Math.PI/2]}>
+          <cylinderGeometry args={[0.02, 0.02, 1.6, 12]} />
+          <meshStandardMaterial {...BRUSHED_ALU} />
+        </mesh>
+
+        {/* Interior Lighting (Ceiling panel) */}
+        <mesh position={[0, 0.98, 0.05]} rotation={[Math.PI/2, 0, 0]}>
+          <planeGeometry args={[1.5, 1.0]} />
+          <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={1.5} />
+        </mesh>
+        <pointLight position={[0, 0.8, 0]} intensity={1.5} color="#e0f2fe" distance={3} />
+
+        {/* Control Operating Panel (COP) */}
+        <group position={[0.6, 0.1, -0.62]}>
+          <mesh>
+            <boxGeometry args={[0.2, 1.2, 0.02]} />
+            <meshStandardMaterial {...BRUSHED_ALU} />
           </mesh>
-          <mesh position={[0, 0.8, 0]}>
-            <boxGeometry args={[0.09, 0.5, 0.07]} />
+          {/* LCD Screen on COP */}
+          <mesh position={[0, 0.45, 0.015]}>
+            <planeGeometry args={[0.12, 0.15]} />
+            <meshStandardMaterial color="#000" emissive="#0284c7" emissiveIntensity={0.8} />
+          </mesh>
+          {/* Floor Buttons (Glowing) */}
+          {[0.2, 0.05, -0.1, -0.25, -0.4].map((y, i) => (
+            <mesh key={`btn-${i}`} position={[0, y, 0.015]} ref={i === 0 ? copLightRef : undefined} rotation={[Math.PI/2, 0, 0]}>
+              <cylinderGeometry args={[0.015, 0.015, 0.01, 16]} />
+              <meshStandardMaterial 
+                color="#ffffff" 
+                emissive={i === 0 ? "#E60000" : "#ffffff"} 
+                emissiveIntensity={i === 0 ? 0.2 : 0.5} 
+              />
+            </mesh>
+          ))}
+        </group>
+
+        {/* The Sliding Doors (Front face) */}
+        <group position={[0, 0, 0.74]}>
+          {/* Left Door */}
+          <mesh ref={leftDoorRef} position={[-0.22, 0, 0]}>
+            <boxGeometry args={[0.45, 1.98, 0.03]} />
+            <meshStandardMaterial {...BRUSHED_ALU} />
+          </mesh>
+          {/* Right Door */}
+          <mesh ref={rightDoorRef} position={[0.22, 0, 0]}>
+            <boxGeometry args={[0.45, 1.98, 0.03]} />
+            <meshStandardMaterial {...BRUSHED_ALU} />
+          </mesh>
+          {/* Header/Track */}
+          <mesh position={[0, 1.0, 0]}>
+            <boxGeometry args={[1.8, 0.1, 0.05]} />
+            <meshStandardMaterial {...DARK_METAL} />
+          </mesh>
+        </group>
+      </group>
+
+
+      {/* ══════════════════════════════════════════════════════
+          MACHINE ROOM / HEADROOM (Drive, Ropes, Controller)
+      ══════════════════════════════════════════════════════ */}
+      <group position={[0, 3.8, 0]}>
+        
+        {/* Support Steel Bedplate */}
+        <mesh position={[0, -0.2, 0]}>
+          <boxGeometry args={[2.5, 0.15, 1.5]} />
+          <meshStandardMaterial {...DARK_METAL} />
+        </mesh>
+
+        {/* Modernization Controller Cabinet (The Brains) */}
+        <group position={[0.8, 0.6, -0.4]} rotation={[0, -0.2, 0]}>
+          <mesh>
+            <boxGeometry args={[0.6, 1.4, 0.3]} />
+            <meshStandardMaterial color="#cbd5e1" metalness={0.4} roughness={0.3} />
+          </mesh>
+          <mesh position={[0, 0, 0.16]}>
+            <boxGeometry args={[0.5, 1.3, 0.02]} />
+            <meshStandardMaterial color="#f1f5f9" />
+          </mesh>
+          {/* Diagnostic Display */}
+          <mesh position={[0, 0.4, 0.18]}>
+            <planeGeometry args={[0.3, 0.2]} />
+            <meshStandardMaterial color="#000" emissive="#10b981" emissiveIntensity={1.2} />
+          </mesh>
+          {/* Red/Blue status lights */}
+          <mesh position={[-0.1, 0.1, 0.18]}>
+            <sphereGeometry args={[0.02]} />
+            <meshBasicMaterial color="#ef4444" />
+          </mesh>
+          <mesh position={[0.1, 0.1, 0.18]}>
+            <sphereGeometry args={[0.02]} />
+            <meshBasicMaterial color="#3b82f6" />
+          </mesh>
+          {/* Brand Plate */}
+          <mesh position={[0, -0.4, 0.18]}>
+            <boxGeometry args={[0.2, 0.08, 0.01]} />
+            <meshStandardMaterial {...BRAND_RED} />
+          </mesh>
+        </group>
+
+        {/* Gearless Traction Machine (Simplified representation) */}
+        <group position={[-0.4, 0.3, 0]}>
+          {/* Motor Body */}
+          <Cylinder args={[0.25, 0.25, 0.6, 32]} rotation={[Math.PI/2, 0, 0]}>
+            <meshStandardMaterial {...BRAND_NAVY} />
+          </Cylinder>
+          {/* Brake Arms */}
+          <mesh position={[0, 0.3, 0]}>
+            <boxGeometry args={[0.4, 0.1, 0.3]} />
             <meshStandardMaterial {...STEEL} />
           </mesh>
-        </group>
-        {/* Manual release knob */}
-        <mesh position={[0, -0.56, 0]}>
-          <sphereGeometry args={[0.07, 12, 12]} />
-          <meshStandardMaterial {...RED} />
-        </mesh>
-        {/* Mounting bolts on face */}
-        {angleArr(6).map((a, i) => (
-          <mesh key={i} position={[-0.24, Math.sin(a) * 0.38, Math.cos(a) * 0.38]}>
-            <cylinderGeometry args={[0.025, 0.025, 0.1, 8]} />
-            <meshStandardMaterial {...BOLT} />
-          </mesh>
-        ))}
-      </group>
-
-      {/* ══════════════════════════════════════════════════════
-          ABSOLUTE ENCODER (opposite side – non-brake end)
-          On a real gearless PMSM traction machine there is NO gearbox.
-          The motor shaft drives the sheave directly. The encoder reads
-          the rotor angular position for the VVVF drive commutation.
-      ══════════════════════════════════════════════════════ */}
-      <group position={[-2.0, 0, 0]}>
-
-        {/* Motor endshield / bearing cover (the flat face plate) */}
-        <mesh rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.72, 0.72, 0.08, 48]} />
-          <meshStandardMaterial {...DARK} />
-        </mesh>
-        {/* Bearing housing centre boss */}
-        <mesh rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.22, 0.22, 0.18, 24]} />
-          <meshStandardMaterial {...STEEL} />
-        </mesh>
-        {/* Endshield mounting bolts (6) */}
-        {angleArr(6).map((a, i) => (
-          <mesh key={i} position={[0, Math.sin(a) * 0.56, Math.cos(a) * 0.56]} rotation={[0, 0, Math.PI / 2]}>
-            <cylinderGeometry args={[0.025, 0.025, 0.12, 8]} />
-            <meshStandardMaterial {...BOLT} />
-          </mesh>
-        ))}
-
-        {/* Encoder body – small cylindrical housing */}
-        <group position={[-0.20, 0, 0]}>
-          {/* Main encoder housing */}
-          <mesh rotation={[0, 0, Math.PI / 2]}>
-            <cylinderGeometry args={[0.15, 0.15, 0.22, 24]} />
-            <meshStandardMaterial color="#1a2535" metalness={0.85} roughness={0.2} />
-          </mesh>
-          {/* Encoder disc (visible through the face) */}
-          <mesh position={[-0.07, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-            <cylinderGeometry args={[0.11, 0.11, 0.01, 32]} />
-            <meshStandardMaterial color="#334455" metalness={0.6} roughness={0.3} />
-          </mesh>
-          {/* Optical ring pattern on disc */}
-          {angleArr(16).map((a, i) => (
-            <mesh key={i} position={[-0.075, Math.sin(a) * 0.075, Math.cos(a) * 0.075]} rotation={[0, 0, Math.PI / 2]}>
-              <boxGeometry args={[0.012, 0.018, 0.012]} />
-              <meshStandardMaterial color={i % 2 === 0 ? '#ffffff' : '#111111'} />
-            </mesh>
-          ))}
-          {/* Encoder cap / connector snout */}
-          <mesh position={[-0.17, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-            <cylinderGeometry args={[0.08, 0.08, 0.1, 16]} />
-            <meshStandardMaterial color="#0f1824" metalness={0.7} roughness={0.3} />
-          </mesh>
-          {/* M12 connector (the signal cable plug) */}
-          <mesh position={[-0.23, 0.09, 0]} rotation={[0.4, 0, Math.PI / 2]}>
-            <cylinderGeometry args={[0.025, 0.025, 0.1, 12]} />
-            <meshStandardMaterial color="#2a3a4a" metalness={0.8} roughness={0.2} />
-          </mesh>
-          {/* Signal cable running toward cabinet */}
-          <mesh position={[-0.03, 0.22, 0.1]} rotation={[0.5, 0.2, 0.1]}>
-            <cylinderGeometry args={[0.012, 0.012, 0.55, 8]} />
-            <meshStandardMaterial color="#223344" metalness={0.5} roughness={0.6} />
-          </mesh>
-          {/* Red LED indicator dot (power on) */}
-          <mesh position={[-0.24, 0, 0.12]}>
-            <sphereGeometry args={[0.016, 10, 10]} />
-            <meshBasicMaterial color="#ff2200" />
-          </mesh>
-          {/* Encoder label plate */}
-          <mesh position={[0.02, 0.16, 0]} rotation={[0.3, 0, 0]}>
-            <boxGeometry args={[0.16, 0.06, 0.01]} />
-            <meshStandardMaterial color="#e0e4ea" metalness={0.2} roughness={0.7} />
-          </mesh>
-        </group>
-
-        {/* Shaft stub protruding from encoder (the motor shaft end) */}
-        <mesh position={[-0.44, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.05, 0.05, 0.18, 16]} />
-          <meshStandardMaterial {...STEEL} />
-        </mesh>
-      </group>
-
-      {/* ══════════════════════════════════════════════════════
-          ROPE DEFLECTOR SHEAVE
-          On most MRL machines a small cast-iron deflector sheave
-          is mounted above the machine on a separate bracket to
-          redirect the ropes into the hoistway at the correct angle.
-      ══════════════════════════════════════════════════════ */}
-      <group position={[-0.6, 1.9, 0]}>
-        {/* Bracket upright */}
-        <mesh position={[0, -0.6, 0]}>
-          <boxGeometry args={[0.1, 1.0, 0.22]} />
-          <meshStandardMaterial {...DARK} />
-        </mesh>
-        {/* Bracket base plate */}
-        <mesh position={[0, -1.12, 0]}>
-          <boxGeometry args={[0.45, 0.08, 0.5]} />
-          <meshStandardMaterial {...DARK} />
-        </mesh>
-        {/* Bracket base bolts */}
-        {([-0.16, 0.16] as number[]).flatMap(x =>
-          ([-0.18, 0.18] as number[]).map((z) => (
-            <mesh key={`${x}${z}`} position={[x, -1.08, z]}>
-              <cylinderGeometry args={[0.022, 0.022, 0.1, 8]} />
-              <meshStandardMaterial {...BOLT} />
-            </mesh>
-          ))
-        )}
-        {/* Axle pin */}
-        <mesh rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.04, 0.04, 0.7, 16]} />
-          <meshStandardMaterial {...STEEL} />
-        </mesh>
-        {/* Deflector sheave wheel */}
-        <mesh rotation={[0, 0, Math.PI / 2]}>
-          <torusGeometry args={[0.42, 0.07, 16, 48]} />
-          <meshStandardMaterial color="#4a5060" metalness={0.85} roughness={0.25} />
-        </mesh>
-        {/* Sheave web / disc */}
-        <mesh rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.38, 0.38, 0.04, 32]} />
-          <meshStandardMaterial color="#525c6a" metalness={0.75} roughness={0.3} />
-        </mesh>
-        {/* Two rope grooves */}
-        {[-0.07, 0.07].map((x, i) => (
-          <mesh key={i} position={[x, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-            <torusGeometry args={[0.42, 0.026, 10, 48]} />
-            <meshStandardMaterial {...RUBBER} />
-          </mesh>
-        ))}
-        {/* Sheave spokes (4) */}
-        {angleArr(4).map((a, i) => (
-          <mesh key={i} rotation={[a, Math.PI / 2, 0]}>
-            <boxGeometry args={[0.055, 0.8, 0.04]} />
-            <meshStandardMaterial color="#525c6a" metalness={0.8} roughness={0.3} />
-          </mesh>
-        ))}
-        {/* Rope going down into hoistway each side */}
-        {[-0.07, 0.07].map((x, i) => (
-          <mesh key={i} position={[x, -0.98, 0]}>
-            <cylinderGeometry args={[0.016, 0.016, 1.5, 8]} />
-            <meshStandardMaterial color="#808890" metalness={1} roughness={0.05} />
-          </mesh>
-        ))}
-      </group>
-
-      {/* ══════════════════════════════════════════════════════
-          COOLING FAN (end of motor)
-      ══════════════════════════════════════════════════════ */}
-      <group position={[-1.62, 0, 0]}>
-        {/* Fan cover grille */}
-        <Cylinder args={[0.5, 0.52, 0.16, 32]} rotation={[0, 0, Math.PI / 2]}>
-          <meshStandardMaterial color="#1e2838" metalness={0.8} roughness={0.3} />
-        </Cylinder>
-        {/* Grille radial bars */}
-        {angleArr(10).map((a, i) => (
-          <mesh key={i} position={[0, Math.sin(a) * 0.25, Math.cos(a) * 0.25]} rotation={[a, Math.PI / 2, 0]}>
-            <boxGeometry args={[0.14, 0.5, 0.022]} />
-            <meshStandardMaterial {...DARK} />
-          </mesh>
-        ))}
-        {/* Fan blades */}
-        <group ref={fanRef}>
-          {angleArr(7).map((a, i) => (
-            <mesh key={i} position={[0.02, Math.sin(a) * 0.3, Math.cos(a) * 0.3]} rotation={[a + 0.3, Math.PI / 2, 0]}>
-              <boxGeometry args={[0.06, 0.32, 0.04]} />
+          {/* Traction Sheave */}
+          <group ref={sheaveRef} position={[0, 0, 0.35]}>
+            <Cylinder args={[0.35, 0.35, 0.1, 32]} rotation={[Math.PI/2, 0, 0]}>
               <meshStandardMaterial {...STEEL} />
-            </mesh>
+            </Cylinder>
+            {[-0.03, 0, 0.03].map((z, i) => (
+              <Cylinder key={`groove-${i}`} args={[0.36, 0.36, 0.005, 32]} position={[0, 0, z]} rotation={[Math.PI/2, 0, 0]}>
+                <meshStandardMaterial color="#222" />
+              </Cylinder>
+            ))}
+          </group>
+        </group>
+
+        {/* ══════════════════════════════════════════════════════
+            SUSPENSION ROPES (Connecting Cab to Machine)
+        ══════════════════════════════════════════════════════ */}
+        <group position={[-0.4, 0, 0]}>
+          {[-0.03, 0, 0.03].map((z, i) => (
+            <group key={`rope-${i}`}>
+              {/* Rope going down to Cab */}
+              <mesh position={[0.35, -2.5, 0.35 + z]}>
+                <cylinderGeometry args={[0.005, 0.005, 5, 8]} />
+                <meshStandardMaterial {...ROPE_STEEL} />
+              </mesh>
+              {/* Rope wrapping over sheave */}
+              <mesh position={[0, 0.3, 0.35 + z]} rotation={[0, 0, Math.PI/2]}>
+                <cylinderGeometry args={[0.005, 0.005, 0.7, 8]} />
+                <meshStandardMaterial {...ROPE_STEEL} />
+              </mesh>
+              {/* Rope going down to Counterweight (Back shaft) */}
+              <mesh position={[-0.35, -2.5, 0.35 + z]}>
+                <cylinderGeometry args={[0.005, 0.005, 5, 8]} />
+                <meshStandardMaterial {...ROPE_STEEL} />
+              </mesh>
+            </group>
           ))}
         </group>
       </group>
-
-      {/* ══════════════════════════════════════════════════════
-          CONTROL PANEL / DRIVE INVERTER CABINET
-      ══════════════════════════════════════════════════════ */}
-      <group position={[2.2, -0.22, 0]}>
-        <mesh>
-          <boxGeometry args={[0.52, 1.1, 0.7]} />
-          <meshStandardMaterial color="#1c2535" metalness={0.75} roughness={0.3} />
-        </mesh>
-        {/* Display */}
-        <mesh position={[0.27, 0.28, 0]}>
-          <planeGeometry args={[0.32, 0.22]} />
-          <meshBasicMaterial color="#002244" />
-        </mesh>
-        <mesh position={[0.271, 0.28, 0]}>
-          <planeGeometry args={[0.28, 0.18]} />
-          <meshBasicMaterial color="#00e5ff" />
-        </mesh>
-        {/* Indicator LEDs */}
-        {[0.1, 0, -0.1].map((z, i) => (
-          <mesh key={i} position={[0.27, -0.12, z]}>
-            <sphereGeometry args={[0.022, 10, 10]} />
-            <meshBasicMaterial color={i === 0 ? '#00ff66' : i === 1 ? '#ffcc00' : '#ff4400'} />
-          </mesh>
-        ))}
-        {/* Ventilation slots */}
-        {[-0.25, -0.15, -0.05, 0.05, 0.15, 0.25].map((y, i) => (
-          <mesh key={i} position={[0.27, y, 0.25]}>
-            <boxGeometry args={[0.28, 0.02, 0.02]} />
-            <meshStandardMaterial color="#0f1520" metalness={0.5} roughness={0.5} />
-          </mesh>
-        ))}
-        {/* Door handle */}
-        <mesh position={[0.27, -0.35, -0.27]}>
-          <boxGeometry args={[0.04, 0.16, 0.04]} />
-          <meshStandardMaterial {...STEEL} />
-        </mesh>
-        {/* Conduit pipe coming out bottom */}
-        <mesh position={[0, -0.65, -0.22]} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.04, 0.04, 0.25, 12]} />
-          <meshStandardMaterial color="#2a3444" metalness={0.7} roughness={0.4} />
-        </mesh>
-        {/* Cable glands */}
-        {[-0.12, 0, 0.12].map((z, i) => (
-          <mesh key={i} position={[0, -0.56, z]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.035, 0.045, 0.08, 12]} />
-            <meshStandardMaterial color="#2a3040" metalness={0.75} roughness={0.3} />
-          </mesh>
-        ))}
-      </group>
-
-      {/* ══════════════════════════════════════════════════════
-          CABLE CONDUITS connecting components
-      ══════════════════════════════════════════════════════ */}
-      {/* Motor to cabinet */}
-      <mesh position={[0.6, 0.82, 0.3]}>
-        <cylinderGeometry args={[0.04, 0.04, 2.6, 10]} />
-        <meshStandardMaterial color="#1a2535" metalness={0.6} roughness={0.5} />
-      </mesh>
-      {/* Brake cable */}
-      <mesh position={[1.8, 0.65, -0.2]} rotation={[0.2, 0, 0.4]}>
-        <cylinderGeometry args={[0.025, 0.025, 0.8, 8]} />
-        <meshStandardMaterial color="#334455" metalness={0.5} roughness={0.6} />
-      </mesh>
-
-      {/* ══════════════════════════════════════════════════════
-          MASTER RED BRAND PLATE on motor housing
-      ══════════════════════════════════════════════════════ */}
-      <mesh position={[-0.8, 0.72, 0]}>
-        <boxGeometry args={[0.55, 0.14, 0.04]} />
-        <meshStandardMaterial {...RED} />
-      </mesh>
-      <mesh position={[-0.8, 0.72, 0.025]}>
-        <planeGeometry args={[0.5, 0.1]} />
-        <meshStandardMaterial color="#ffffff" metalness={0.2} roughness={0.8} />
-      </mesh>
 
     </group>
   );
