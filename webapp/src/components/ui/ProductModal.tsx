@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { type FC, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check } from 'lucide-react';
 import { Button } from './Button';
@@ -11,6 +11,7 @@ interface ProductModalProps {
     desc: string;
     fullDesc?: string;
     features?: string[];
+    imageUrl?: string;
   } | null;
 }
 
