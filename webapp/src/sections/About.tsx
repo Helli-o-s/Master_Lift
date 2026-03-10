@@ -21,7 +21,7 @@ export const About = () => {
             {/* The Image (placeholder colored block for now, user can swap) */}
             <div className="relative z-10 aspect-[4/5] max-h-[340px] sm:max-h-none bg-slate-200 rounded-xl rounded-br-[80px] overflow-hidden border border-slate-300 shadow-2xl group">
               <img 
-                src="/images/about.png" 
+                src="/images/about.webp" 
                 alt="Master Elevator Profile" 
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
