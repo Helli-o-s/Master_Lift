@@ -13,13 +13,13 @@ export const About = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6 }}
-            className="relative"
+            className="relative order-2 lg:order-1"
           >
             {/* Dark technical frame */}
             <div className="absolute -inset-4 bg-secondary rounded-xl rounded-br-[100px] z-0 opacity-5" />
             
             {/* The Image (placeholder colored block for now, user can swap) */}
-            <div className="relative z-10 aspect-[4/5] bg-slate-200 rounded-xl rounded-br-[80px] overflow-hidden border border-slate-300 shadow-2xl group">
+            <div className="relative z-10 aspect-[4/5] max-h-[340px] sm:max-h-none bg-slate-200 rounded-xl rounded-br-[80px] overflow-hidden border border-slate-300 shadow-2xl group">
               <img 
                 src="/images/about.png" 
                 alt="Master Elevator Profile" 
@@ -44,6 +44,7 @@ export const About = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, delay: 0.2 }}
+            className="order-1 lg:order-2"
           >
             <SectionHeading 
               title="Built on Trust & Precision." 

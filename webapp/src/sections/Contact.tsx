@@ -56,11 +56,11 @@ export const Contact = () => {
   };
 
   return (
-    <section id="contact" className="py-24 bg-slate-50">
+    <section id="contact" className="py-16 lg:py-24 bg-slate-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <SectionHeading title="Request a Service." subtitle="Our engineering team is ready to deploy across Bahrain 24/7." />
 
-        <div className="flex flex-col lg:flex-row gap-16 mt-16">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 mt-12 lg:mt-16">
           
           {/* Contact Info Col */}
           <div className="lg:w-1/3 space-y-8">
@@ -106,7 +106,7 @@ export const Contact = () => {
           </div>
 
           {/* Form Col */}
-          <div className="lg:w-2/3 bg-white p-8 md:p-12 rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50">
+          <div className="lg:w-2/3 bg-white p-6 sm:p-8 md:p-12 rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
@@ -116,7 +116,7 @@ export const Contact = () => {
                   <input 
                     id="name"
                     {...register("name", { required: true })}
-                    className={`px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${errors.name ? 'border-red-500' : 'border-slate-200'}`}
+                    className={`text-base px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${errors.name ? 'border-red-500' : 'border-slate-200'}`}
                     placeholder="Enter your name"
                   />
                 </div>
@@ -128,7 +128,7 @@ export const Contact = () => {
                     id="email"
                     type="email"
                     {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
-                    className={`px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${errors.email ? 'border-red-500' : 'border-slate-200'}`}
+                    className={`text-base px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${errors.email ? 'border-red-500' : 'border-slate-200'}`}
                     placeholder="you@company.com"
                   />
                 </div>
@@ -140,7 +140,7 @@ export const Contact = () => {
                     id="phone"
                     type="tel"
                     {...register("phone", { required: true })}
-                    className={`px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${errors.phone ? 'border-red-500' : 'border-slate-200'}`}
+                    className={`text-base px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${errors.phone ? 'border-red-500' : 'border-slate-200'}`}
                     placeholder="+973 XXXXXXXX"
                   />
                 </div>
@@ -151,7 +151,7 @@ export const Contact = () => {
                   <select 
                     id="service"
                     {...register("service", { required: true })}
-                    className={`px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all appearance-none ${errors.service ? 'border-red-500' : 'border-slate-200'}`}
+                    className={`text-base px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all appearance-none ${errors.service ? 'border-red-500' : 'border-slate-200'}`}
                   >
                     <option value="">Select a service...</option>
                     <option value="maintenance">Maintenance</option>
@@ -171,7 +171,7 @@ export const Contact = () => {
                   id="message"
                   rows={4}
                   {...register("message", { required: true })}
-                  className={`px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-y ${errors.message ? 'border-red-500' : 'border-slate-200'}`}
+                  className={`text-base px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-y ${errors.message ? 'border-red-500' : 'border-slate-200'}`}
                   placeholder="How can our engineering team assist you?"
                 />
               </div>

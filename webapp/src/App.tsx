@@ -13,7 +13,7 @@ const Footer = lazy(() => import('./components/layout/Footer').then(m => ({ defa
 
 function App() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col overflow-x-hidden">
       <Navbar />
       
       <main className="flex-grow">

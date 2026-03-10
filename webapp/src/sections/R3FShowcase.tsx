@@ -33,7 +33,7 @@ export const R3FShowcase = () => {
   const controlsRef = useRef<{ reset: () => void } | null>(null);
 
   return (
-    <section className="py-28 bg-secondary text-white relative overflow-hidden">
+    <section className="py-16 md:py-24 lg:py-28 bg-secondary text-white relative overflow-hidden">
 
       {/* Ambient background decorations */}
       <div className="absolute inset-0 pointer-events-none">
@@ -104,7 +104,7 @@ export const R3FShowcase = () => {
             ))}
 
             {/* Stats row */}
-            <div className="flex gap-8 pt-4 pl-2">
+            <div className="flex flex-wrap gap-x-8 gap-y-4 pt-4 pl-2">
               {[['20+', 'Years expertise'], ['500+', 'Units installed'], ['24/7', 'Response team']].map(([val, label]) => (
                 <div key={label}>
                   <p className="text-3xl font-bold text-primary">{val}</p>
@@ -123,7 +123,7 @@ export const R3FShowcase = () => {
             className="relative order-1 lg:order-2"
           >
             {/* Canvas container */}
-            <div className="relative w-full h-[420px] md:h-[520px] bg-slate-900/60 rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+            <div className="relative w-full h-[300px] sm:h-[380px] md:h-[440px] lg:h-[520px] bg-slate-900/60 rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
 
               {/* Radial glow behind model */}
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(230,0,0,0.12)_0%,_transparent_70%)] pointer-events-none" />
@@ -158,7 +158,8 @@ export const R3FShowcase = () => {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
                 </svg>
-                Drag to rotate · Scroll to zoom
+                <span className="hidden sm:inline">Drag to rotate · Scroll to zoom</span>
+                <span className="sm:hidden">Drag · Zoom</span>
               </div>
 
               {/* Auto-rotate reset button (appears after user interacts) */}

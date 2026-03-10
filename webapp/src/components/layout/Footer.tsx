@@ -12,7 +12,7 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           
           {/* Brand Col */}
-          <div className="lg:col-span-1">
+          <div className="md:col-span-2 lg:col-span-1">
             <div 
               className="flex items-center gap-2 mb-6 cursor-pointer"
               onClick={scrollToTop}
@@ -106,7 +106,7 @@ export const Footer = () => {
               </li>
               <li className="flex items-center gap-3 hover:text-white transition-colors">
                 <Mail size={18} className="text-primary shrink-0" />
-                <a href="mailto:info@masterelevatorbh.com">info@masterelevatorbh.com</a>
+                <a href="mailto:info@masterelevatorbh.com" className="break-all">info@masterelevatorbh.com</a>
               </li>
             </ul>
           </div>

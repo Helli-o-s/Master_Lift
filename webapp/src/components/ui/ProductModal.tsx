@@ -62,7 +62,7 @@ export const ProductModal: FC<ProductModalProps> = ({ isOpen, onClose, product }
             {/* Close Button */}
             <button 
               onClick={onClose}
-              className="absolute top-4 right-4 z-20 p-2 bg-slate-100/50 hover:bg-slate-200 rounded-full text-slate-500 transition-colors"
+              className="absolute top-4 right-4 z-20 p-2.5 bg-slate-100/50 hover:bg-slate-200 rounded-full text-slate-500 transition-colors"
             >
               <X size={24} />
             </button>
@@ -86,7 +86,7 @@ export const ProductModal: FC<ProductModalProps> = ({ isOpen, onClose, product }
             </div>
 
             {/* Text Side */}
-            <div className="md:w-3/5 p-8 md:p-12 flex flex-col">
+            <div className="md:w-3/5 p-5 sm:p-8 md:p-12 flex flex-col">
               
               <div className="mb-2 w-12 h-1 bg-primary -skew-x-12" />
               

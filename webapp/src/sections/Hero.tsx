@@ -64,7 +64,7 @@ export const Hero = () => {
         </motion.div>
 
         {/* 3D Canvas Area */}
-        <div className="relative h-[50vh] lg:h-[80vh] w-full mt-12 lg:mt-0">
+        <div className="relative h-[38vh] sm:h-[44vh] lg:h-[80vh] w-full mt-8 lg:mt-0 touch-none">
           <div className="absolute inset-0 bg-gradient-to-tr from-slate-100 to-transparent rounded-[2rem] rounded-bl-[6rem] opacity-50 pointer-events-none" />
           
           <Canvas camera={{ position: [5, 2, 5], fov: 45 }}>

@@ -16,8 +16,8 @@ export const Services = () => {
         <div className="lg:flex lg:gap-24">
           
           {/* Sticky Left Column */}
-          <div className="lg:w-1/3 mb-16 lg:mb-0">
-            <div className="sticky top-32">
+          <div className="lg:w-1/3 mb-12 lg:mb-0">
+            <div className="md:sticky md:top-32">
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
