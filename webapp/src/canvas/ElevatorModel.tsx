@@ -1,7 +1,7 @@
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Group } from 'three';
-import { RoundedBox, Cylinder, Sphere } from '@react-three/drei';
+import { RoundedBox } from '@react-three/drei';
 
 // ── Reusable material defs ──────────────────────────────────────────────────
 const STEEL   = { color: '#8090a0', metalness: 0.95, roughness: 0.12 };
@@ -110,7 +110,7 @@ export const ElevatorModel = () => {
 
       {/* Corner posts (4) */}
       {([-0.96, 0.96] as number[]).flatMap(x =>
-        ([-0.96, 0.96] as number[]).map((z, i) => (
+        ([-0.96, 0.96] as number[]).map((z, _i) => (
           <mesh key={`${x}${z}`} position={[x, 0, z]}>
             <boxGeometry args={[0.08, 3.08, 0.08]} />
             <meshStandardMaterial {...STEEL} />
