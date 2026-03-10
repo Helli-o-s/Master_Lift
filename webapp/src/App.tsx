@@ -1,12 +1,15 @@
+import { lazy, Suspense } from 'react';
 import { Navbar } from './components/layout/Navbar';
-import { Footer } from './components/layout/Footer';
 import { Hero } from './sections/Hero';
-import { About } from './sections/About';
-import { Products } from './sections/Products';
-import { Services } from './sections/Services';
-import { Stats } from './sections/Stats';
-import { Contact } from './sections/Contact';
-import { R3FShowcase } from './sections/R3FShowcase';
+
+// Lazy load everything below the fold for better LCP
+const About = lazy(() => import('./sections/About').then(m => ({ default: m.About })));
+const Products = lazy(() => import('./sections/Products').then(m => ({ default: m.Products })));
+const Services = lazy(() => import('./sections/Services').then(m => ({ default: m.Services })));
+const Stats = lazy(() => import('./sections/Stats').then(m => ({ default: m.Stats })));
+const R3FShowcase = lazy(() => import('./sections/R3FShowcase').then(m => ({ default: m.R3FShowcase })));
+const Contact = lazy(() => import('./sections/Contact').then(m => ({ default: m.Contact })));
+const Footer = lazy(() => import('./components/layout/Footer').then(m => ({ default: m.Footer })));
 
 function App() {
   return (
@@ -15,15 +18,19 @@ function App() {
       
       <main className="flex-grow">
         <Hero />
-        <About />
-        <Products />
-        <Services />
-        <Stats />
-        <R3FShowcase />
-        <Contact />
+        <Suspense fallback={<div className="h-screen animate-pulse bg-slate-50" />}>
+          <About />
+          <Products />
+          <Services />
+          <Stats />
+          <R3FShowcase />
+          <Contact />
+        </Suspense>
       </main>
 
-      <Footer />
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
     </div>
   );
 }
