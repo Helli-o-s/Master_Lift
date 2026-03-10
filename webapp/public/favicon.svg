@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120">
+  <!--
+    Master Elevator – brand arrow logo
+    Shape: upward-pointing compass arrow with a triangular notch cut into the base,
+    matching the red angular logo provided by the user.
+  -->
+  <polygon
+    points="50,4 96,116 50,88 4,116"
+    fill="#E60000"
+  />
+</svg>

@@ -1,7 +1,14 @@
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { Button } from '../components/ui/Button';
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle, AlertCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
+
+// ── FormSubmit.co ────────────────────────────────────────────────────────────
+// No account or API keys needed!
+// The first submission will send a one-time activation email to the address below.
+// Click "Confirm" in that email once, and all future submissions will be delivered.
+const FORMSUBMIT_EMAIL = 'info@masterelevatorbh.com';
 
 type FormData = {
   name: string;
@@ -11,14 +18,41 @@ type FormData = {
   message: string;
 };
 
+type Status = 'idle' | 'sending' | 'success' | 'error';
+
 export const Contact = () => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
+  const [status, setStatus] = useState<Status>('idle');
 
-  const onSubmit = (data: FormData) => {
-    console.log('Form Submitted', data);
-    // In a real build, we'd trigger an API or mailto here.
-    alert('Thank you for your inquiry. A Master Elevator representative will contact you shortly.');
-    reset();
+  const onSubmit = async (data: FormData) => {
+    setStatus('sending');
+    try {
+      const res = await fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_EMAIL}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name:         data.name,
+          email:        data.email,
+          phone:        data.phone,
+          service:      data.service,
+          message:      data.message,
+          // FormSubmit extras
+          _subject:     `New Service Request – ${data.service} from ${data.name}`,
+          _captcha:     'false',   // disable captcha (form already has validation)
+          _template:    'table',   // nicely formatted email
+        }),
+      });
+      const json = await res.json();
+      if (json.success === 'true' || json.success === true) {
+        setStatus('success');
+        reset();
+      } else {
+        throw new Error('FormSubmit returned non-success');
+      }
+    } catch (err) {
+      console.error('FormSubmit error:', err);
+      setStatus('error');
+    }
   };
 
   return (
@@ -43,8 +77,8 @@ export const Contact = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-secondary mb-1">24/7 Hotlines</h4>
-                    <p className="text-slate-600 font-medium">+973 35081527</p>
-                    <p className="text-slate-600 font-medium">+973 39966710</p>
+                    <a href="tel:+97335081527" className="block text-slate-600 font-medium hover:text-primary transition-colors">+973 35081527</a>
+                    <a href="tel:+97339966710" className="block text-slate-600 font-medium hover:text-primary transition-colors">+973 39966710</a>
                   </div>
                 </div>
 
@@ -54,7 +88,7 @@ export const Contact = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-secondary mb-1">Email</h4>
-                    <p className="text-slate-600">info@masterelevatorbh.com</p>
+                    <a href="mailto:info@masterelevatorbh.com" className="text-slate-600 hover:text-primary transition-colors break-all">info@masterelevatorbh.com</a>
                   </div>
                 </div>
 
@@ -64,7 +98,7 @@ export const Contact = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-secondary mb-1">Headquarters</h4>
-                    <p className="text-slate-600">Kingdom of Bahrain</p>
+                    <a href="https://maps.google.com/?q=Kingdom+of+Bahrain" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-primary transition-colors">Kingdom of Bahrain</a>
                   </div>
                 </div>
               </div>
@@ -142,8 +176,28 @@ export const Contact = () => {
                 />
               </div>
 
-              <Button type="submit" size="lg" className="w-full md:w-auto" icon={Send}>
-                Submit Request
+              {/* Status banners */}
+              {status === 'success' && (
+                <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700">
+                  <CheckCircle size={20} className="shrink-0" />
+                  <span className="font-medium">Your request has been sent! A Master Elevator representative will contact you shortly.</span>
+                </div>
+              )}
+              {status === 'error' && (
+                <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
+                  <AlertCircle size={20} className="shrink-0" />
+                  <span className="font-medium">Something went wrong. Please call us directly at <a href="tel:+97335081527" className="underline">+973 35081527</a> or email <a href="mailto:info@masterelevatorbh.com" className="underline">info@masterelevatorbh.com</a>.</span>
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full md:w-auto"
+                icon={Send}
+                disabled={status === 'sending'}
+              >
+                {status === 'sending' ? 'Sending…' : 'Submit Request'}
               </Button>
             </form>
           </div>
