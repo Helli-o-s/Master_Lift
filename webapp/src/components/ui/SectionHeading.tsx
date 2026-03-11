@@ -1,10 +1,10 @@
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { cn } from '../../lib/utils';
 import { motion, type Variants } from 'framer-motion';
 
 interface SectionHeadingProps {
-  title: string;
-  subtitle?: string;
+  title: ReactNode;
+  subtitle?: ReactNode;
   alignment?: 'left' | 'center';
   className?: string;
 }

@@ -34,7 +34,7 @@ export const Footer = () => {
               className="flex items-center gap-2 mb-6 cursor-pointer"
               onClick={scrollToTop}
             >
-              <div className="bg-white p-2 rounded-xl inline-flex w-fit shadow-lg shadow-black/20">
+              <div className="bg-white p-2 rounded-none inline-flex w-fit shadow-lg shadow-black/20">
                 <img 
                   src="/master_logo.webp" 
                   alt="Master Elevator Logo" 
@@ -50,7 +50,7 @@ export const Footer = () => {
                 href="https://instagram.com/master_elevator_bahrain" 
                 target="_blank" 
                 rel="noreferrer"
-                className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
+                className="w-10 h-10 rounded-none bg-slate-800 flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram size={20} />
@@ -59,7 +59,7 @@ export const Footer = () => {
                 href="https://wa.me/97335081527" 
                 target="_blank" 
                 rel="noreferrer"
-                className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-[#25D366] hover:text-white transition-colors"
+                className="w-10 h-10 rounded-none bg-slate-800 flex items-center justify-center hover:bg-[#25D366] hover:text-white transition-colors"
                 aria-label="WhatsApp"
               >
                 <WhatsappIcon size={20} />

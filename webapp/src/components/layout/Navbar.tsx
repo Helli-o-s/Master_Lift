@@ -50,7 +50,7 @@ export const Navbar = () => {
             className="flex items-center gap-2 cursor-pointer relative z-50"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            <div className="bg-white/95 backdrop-blur-sm p-1.5 rounded-xl shadow-lg border border-white/20">
+            <div className="bg-white/95 backdrop-blur-sm p-1.5 rounded-none shadow-lg border border-white/20">
               <img 
                 src="/master_logo.webp" 
                 alt="Master Elevator Logo" 

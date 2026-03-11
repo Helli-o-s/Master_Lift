@@ -12,7 +12,7 @@ export const products = [
     desc: 'Premium passenger and freight solutions.',
     fullDesc: 'Our flagship vertical mobility solutions, designed for safety, speed, and architectural harmony. We offer comprehensive solutions from MR (Machine Room) to MRL (Machine Room-Less) configurations tailored to specific building requirements.',
     features: ['Custom Cabin Designs', 'Energy-efficient VVVF drives', 'Advanced seismic and fire protections', 'Panoramic glass options'],
-    imageUrl: '/images/elevators.webp'
+    imageUrl: '/images/elevator-new.jpg'
   },
   { 
     id: 'escalators', 
@@ -20,7 +20,7 @@ export const products = [
     desc: 'High-capacity vertical mobility.',
     fullDesc: 'Heavy-duty escalators engineered for high-traffic environments like malls, airports, and commercial centers. Designed for continuous 24/7 operation with intelligent energy-saving sleep modes.',
     features: ['Heavy-duty truss structure', 'Auto-lubrication systems', 'Anti-slip aluminum steps', 'Radar motion sensors'],
-    imageUrl: '/images/escalators.webp'
+    imageUrl: '/images/escalator-new.jpg'
   },
   { 
     id: 'travelators', 
@@ -28,7 +28,7 @@ export const products = [
     desc: 'Seamless horizontal transport.',
     fullDesc: 'Smooth, inclined and horizontal moving walkways ideal for airports and hypermarkets ensuring effortless transport of passengers with heavy luggage or shopping carts.',
     features: ['Low-profile pallet designs', 'Synchronized handrail drives', 'Toughened glass balustrades', 'High-load capacity structure'],
-    imageUrl: '/images/travelators.webp'
+    imageUrl: '/images/travelator-new.jpg'
   },
   { 
     id: 'dumbwaiters', 
@@ -36,7 +36,7 @@ export const products = [
     desc: 'Efficient compact lifts.',
     fullDesc: 'Small freight elevators specifically designed for restaurants, hospitals, and multi-level residences to quickly and safely transport food, documents, and medical supplies.',
     features: ['Stainless steel cabin hygiene', 'Rope or chain driven options', 'Bi-parting vertical doors', 'Custom shelf configurations'],
-    imageUrl: '/images/dumbwaiters.webp'
+    imageUrl: '/images/dumbwaiter-new.jpg'
   },
   { 
     id: 'cradles', 
@@ -51,27 +51,27 @@ export const products = [
 export const services = [
   { 
     title: 'Maintenance Services', 
-    desc: "We don't just maintain; we elevate experiences. Your safety and satisfaction are our top priorities in every ascent and descent.",
+    desc: "Rigorous preventative maintenance protocols designed to eliminate system downtime and extend hardware lifespan across all major OEM brands.",
     imageUrl: '/images/services/maintenance.webp'
   },
   { 
     title: 'Repair Services', 
-    desc: "Repairing not just components, but trust – where every service is a step towards elevating satisfaction.",
+    desc: "Rapid-response diagnostic and repair teams deployed 24/7. We isolate faults and restore structural operations with precision.",
     imageUrl: '/images/services/repair.webp'
   },
   { 
     title: 'Modernization & Upgrades', 
-    desc: "Step into the future with our modernization services, where every upgrade is a stride towards smarter, safer, and more efficient vertical mobility.",
+    desc: "Complete system overhauls replacing outdated mechanics with high-efficiency VVVF drives, modern controllers, and advanced telemetry.",
     imageUrl: '/images/services/modernization.webp'
   },
   { 
     title: 'Installation', 
-    desc: "Step into a world where installation is an art form – a meticulous craft that shapes spaces, connects stories, and lays the foundation for a journey defined by excellence and innovation.",
+    desc: "Architecturally exact installation of new vertical mobility systems. Delivered on schedule with uncompromising adherence to structural safety standards.",
     imageUrl: '/images/services/installation.webp'
   },
   { 
     title: 'Custom Cab Interiors', 
-    desc: 'Bespoke designs offering the best quality services with competitive price.',
+    desc: "High-finish cabin refurbishments and bespoke material upgrades, elevating the passenger environment without requiring full system replacement.",
     imageUrl: '/images/services/custom_cab.webp'
   }
 ];

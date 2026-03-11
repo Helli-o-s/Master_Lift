@@ -12,10 +12,67 @@ const getIconForService = (title: string) => {
   if (title.includes('Custom')) return <PaintBucket size={24} />;
   return <Wrench size={24} />;
 };
+// --- New Video-Like Background Component ---
+const VideoFeedBackground = ({ src, delay }: { src: string, delay: number }) => {
+  return (
+    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none rounded-none">
+      {/* Continuous slow pan/zoom (Ken Burns effect) */}
+      <motion.img 
+        src={src} 
+        alt="service background"
+        loading="lazy"
+        className="absolute w-[120%] h-[120%] -left-[10%] -top-[10%] object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-60 transition-all duration-700 ease-in-out"
+        animate={{
+          x: ["0%", "-3%", "0%"],
+          y: ["0%", "-3%", "0%"],
+          scale: [1, 1.05, 1],
+        }}
+        transition={{
+          duration: 25,
+          repeat: Infinity,
+          ease: "linear",
+          delay: delay
+        }}
+      />
+      
+      {/* Scanline pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px] opacity-20 mix-blend-overlay" />
+      
+      {/* Scanning laser effect (visible on hover) */}
+      <motion.div 
+        className="absolute left-0 right-0 h-32 bg-gradient-to-b from-transparent via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+        style={{ top: '-100px' }}
+        animate={{
+          y: ['0px', '400px']
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "linear",
+          delay: delay % 2
+        }}
+      />
+
+      {/* Rec icon overlay indicating "live feed" */}
+      <div className="absolute top-6 right-6 flex items-center gap-2 opacity-0 group-hover:opacity-60 transition-opacity duration-300 z-20">
+        <motion.div 
+          className="w-2 h-2 rounded-none bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]"
+          animate={{ opacity: [1, 0.2, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <span className="text-[10px] uppercase font-mono tracking-widest text-white shadow-black drop-shadow-md">Live</span>
+      </div>
+
+      {/* Vignette/Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-transparent" />
+      <div className="absolute inset-0 bg-slate-900/20 mix-blend-overlay" />
+    </div>
+  );
+};
 
 export const Services = () => {
   return (
-    <section id="services" className="py-24 md:py-32 bg-secondary text-white relative overflow-hidden">
+    <section id="services" className="py-24 md:py-32 bg-secondary text-white relative overflow-hidden content-auto">
       
       {/* Brand Watermark / Graphic */}
       <div className="absolute top-0 right-0 w-2/3 h-full opacity-5 pointer-events-none select-none">
@@ -34,21 +91,21 @@ export const Services = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 rounded-full mb-8">
-              <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
-              <span className="font-semibold text-xs tracking-widest text-white/90 uppercase">24/7 Dispatch Ready</span>
+            <div className="inline-flex items-center gap-3 px-6 py-2 bg-white/5 border border-white/10 rounded-none mb-8">
+              <span className="w-2 h-2 rounded-none bg-green-500 animate-pulse" />
+              <span className="font-semibold text-xs tracking-widest text-white/90 uppercase">Operational Readiness: Active</span>
             </div>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-8">
-              Engineered <span className="text-primary italic border-b-4 border-primary/30">Excellence.</span>
+              Operational <span className="text-primary italic border-b-4 border-primary/30">Authority.</span>
             </h2>
             <p className="text-slate-400 text-lg leading-relaxed">
-              From emergency repairs to full-scale vertical modernizations, our specialized engineering team guarantees minimal downtime and maximum safety compliance.
+              From emergency diagnostic repairs to full-scale vertical modernizations, our engineering teams execute with minimal downtime, total compliance, and uncompromising precision.
             </p>
           </motion.div>
         </div>
 
         {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           {services.map((service, index) => {
             // Dynamic span logic for the 5 items
             // Top row: item 0 (col-span-3), item 1 (col-span-3)
@@ -63,35 +120,27 @@ export const Services = () => {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.4, delay: index * 0.1, ease: [0.2, 0, 0, 1] }}
                 className={clsx(
-                  "group relative overflow-hidden rounded-3xl border border-white/10 bg-slate-900/50 min-h-[300px] flex flex-col justify-end p-8 cursor-default",
+                  "group relative overflow-hidden rounded-none border border-white/10 bg-slate-900/50 min-h-[340px] flex flex-col justify-end p-8 cursor-default shadow-xl hover:border-primary/50 transition-colors duration-300",
                   lgSpan, mdSpan
                 )}
               >
-                {/* Background Image (faded & masked) */}
-                <div className="absolute inset-0 z-0">
-                  <img 
-                    src={service.imageUrl} 
-                    alt={service.title} 
-                    className="w-full h-full object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-60 transition-all duration-700 ease-in-out scale-100 group-hover:scale-110"
-                  />
-                  {/* Subtle Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-transparent" />
-                </div>
+                {/* Modernized Video-Like Background */}
+                <VideoFeedBackground src={service.imageUrl} delay={index * 2} />
 
                 {/* Animated Top Border Accent */}
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
 
                 {/* Content */}
-                <div className="relative z-10">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/20 backdrop-blur-md border border-primary/30 text-primary flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                <div className="relative z-10 pointer-events-none">
+                  <div className="w-12 h-12 rounded-lg bg-primary/20 backdrop-blur-md border border-primary/30 text-primary flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                     {getIconForService(service.title)}
                   </div>
-                  <h3 className="text-2xl font-bold mb-3 text-white group-hover:text-primary transition-colors duration-300">
+                  <h3 className="text-2xl font-bold mb-3 text-white group-hover:text-primary transition-colors duration-300 drop-shadow-md">
                     {service.title}
                   </h3>
-                  <p className="text-slate-300 leading-relaxed text-sm md:text-base opacity-80 group-hover:opacity-100 transition-opacity duration-300 line-clamp-3">
+                  <p className="text-slate-300 leading-relaxed text-sm md:text-base opacity-80 group-hover:opacity-100 transition-opacity duration-300 line-clamp-3 drop-shadow-sm">
                     {service.desc}
                   </p>
                 </div>

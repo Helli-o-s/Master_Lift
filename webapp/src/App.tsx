@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Navbar } from './components/layout/Navbar';
 import { Hero } from './sections/Hero';
+import { MotionConfig } from 'framer-motion';
 
 // Lazy load everything below the fold for better LCP
 const About = lazy(() => import('./sections/About').then(m => ({ default: m.About })));
@@ -13,7 +14,8 @@ const Footer = lazy(() => import('./components/layout/Footer').then(m => ({ defa
 
 function App() {
   return (
-    <div className="flex min-h-screen flex-col overflow-x-hidden">
+    <MotionConfig reducedMotion="user">
+      <div className="flex min-h-screen flex-col overflow-x-hidden">
       <Navbar />
       
       <main className="flex-grow">
@@ -31,7 +33,8 @@ function App() {
       <Suspense fallback={null}>
         <Footer />
       </Suspense>
-    </div>
+      </div>
+    </MotionConfig>
   );
 }
 

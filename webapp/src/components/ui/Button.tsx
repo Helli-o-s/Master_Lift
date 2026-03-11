@@ -23,11 +23,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const baseStyles = 'inline-flex items-center justify-center rounded-xl font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50';
+    const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50';
     
     const variants = {
-      primary: 'bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/25 hover:shadow-primary/40',
-      secondary: 'bg-secondary text-white hover:bg-secondary-hover shadow-lg',
+      primary: 'bg-primary text-white hover:bg-primary-hover shadow-sm',
+      secondary: 'bg-secondary text-white hover:bg-secondary-hover shadow-sm',
       outline: 'border-2 border-slate-200 bg-transparent hover:border-primary hover:text-primary',
       ghost: 'bg-transparent text-text-main hover:bg-slate-100',
     };

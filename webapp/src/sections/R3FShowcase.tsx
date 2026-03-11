@@ -71,11 +71,11 @@ export const R3FShowcase = () => {
             <span className="text-primary font-semibold tracking-widest text-xs uppercase">Engineering Excellence</span>
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight max-w-2xl leading-tight">
-            Precision<br />
-            <span className="text-primary">Engineered.</span>
+            The Diagnostic<br />
+            <span className="text-primary">Core.</span>
           </h2>
           <p className="text-slate-400 text-lg mt-4 max-w-xl leading-relaxed">
-            Every component inspected. Every installation verified. Drag the model to explore the real machine inside your building.
+            Total infrastructure visibility. Interact with the core hardware telemetry to review our modernization and safety baseline.
           </p>
         </motion.div>
 
@@ -96,10 +96,10 @@ export const R3FShowcase = () => {
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="group flex gap-5 p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary/30 transition-all duration-300"
+                transition={{ duration: 0.5, delay: i * 0.1, ease: [0.2, 0, 0, 1] }}
+                className="group flex gap-5 p-5 rounded-none bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary/30 transition-all duration-300"
               >
-                <div className="shrink-0 w-12 h-12 rounded-xl bg-primary/15 text-primary flex items-center justify-center group-hover:bg-primary/25 transition-colors">
+                <div className="shrink-0 w-12 h-12 rounded-lg bg-primary/15 text-primary flex items-center justify-center group-hover:bg-primary/25 transition-colors">
                   <f.icon size={22} />
                 </div>
                 <div>
@@ -129,7 +129,7 @@ export const R3FShowcase = () => {
             className="relative order-1 lg:order-2"
           >
             {/* Canvas container */}
-            <div ref={containerRef} className="relative w-full h-[300px] sm:h-[380px] md:h-[440px] lg:h-[520px] bg-slate-900/60 rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+            <div ref={containerRef} className="relative w-full h-[300px] sm:h-[380px] md:h-[440px] lg:h-[520px] bg-slate-900/60 rounded-none border border-white/10 overflow-hidden shadow-xl">
 
               {/* Radial glow behind model */}
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(230,0,0,0.12)_0%,_transparent_70%)] pointer-events-none" />
@@ -173,7 +173,7 @@ export const R3FShowcase = () => {
               )}
 
               {/* Drag hint badge */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-full text-xs text-white/70 pointer-events-none select-none">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-none text-xs text-white/70 pointer-events-none select-none">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
                 </svg>
@@ -185,7 +185,7 @@ export const R3FShowcase = () => {
               {!autoRotate && (
                 <button
                   onClick={() => { setAutoRotate(true); }}
-                  className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-black/50 hover:bg-primary/80 backdrop-blur-sm border border-white/15 rounded-full text-xs text-white/80 hover:text-white transition-all duration-200"
+                  className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-black/50 hover:bg-primary/80 backdrop-blur-sm border border-white/15 rounded-none text-xs text-white/80 hover:text-white transition-all duration-200"
                 >
                   <RotateCcw size={13} />
                   Auto-rotate
@@ -193,10 +193,10 @@ export const R3FShowcase = () => {
               )}
 
               {/* Corner accent lines */}
-              <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-primary/60 rounded-tl-3xl pointer-events-none" />
-              <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-primary/60 rounded-tr-3xl pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-primary/60 rounded-bl-3xl pointer-events-none" />
-              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-primary/60 rounded-br-3xl pointer-events-none" />
+              <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-primary/60 rounded-none pointer-events-none" />
+              <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-primary/60 rounded-none pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-primary/60 rounded-none pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-primary/60 rounded-none pointer-events-none" />
             </div>
 
             {/* Caption below canvas */}

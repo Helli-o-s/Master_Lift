@@ -31,6 +31,11 @@
   color: white;
 }
 
+@utility content-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 1000px;
+}
+
 #root {
   min-height: 100vh;
   display: flex;

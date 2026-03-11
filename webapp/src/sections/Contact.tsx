@@ -56,23 +56,23 @@ export const Contact = () => {
   };
 
   return (
-    <section id="contact" className="py-16 lg:py-24 bg-slate-50">
+    <section id="contact" className="py-24 bg-background relative overflow-hidden content-auto">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <SectionHeading title="Request a Service." subtitle="Our engineering team is ready to deploy across Bahrain 24/7." />
+        <SectionHeading title="Dispatch Request." subtitle="A direct link to our engineering dispatch. Teams are ready to deploy across the Kingdom of Bahrain 24/7." />
 
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 mt-12 lg:mt-16">
           
           {/* Contact Info Col */}
           <div className="lg:w-1/3 space-y-8">
-            <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+            <div className="bg-white p-8 rounded-none border border-slate-200 shadow-lg shadow-slate-200/40">
               <h3 className="text-xl font-bold text-secondary mb-6 flex items-center gap-3">
-                <div className="w-2 h-6 bg-primary rounded-full" />
-                Direct Enquiries
+                <div className="w-1.5 h-6 bg-primary" />
+                Direct Dispatch
               </h3>
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-slate-50 text-primary rounded-xl">
+                  <div className="p-3 bg-slate-50 border border-slate-100 text-primary">
                     <Phone size={24} />
                   </div>
                   <div>
@@ -83,7 +83,7 @@ export const Contact = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-slate-50 text-primary rounded-xl">
+                  <div className="p-3 bg-slate-50 border border-slate-100 text-primary">
                     <Mail size={24} />
                   </div>
                   <div>
@@ -93,7 +93,7 @@ export const Contact = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-slate-50 text-primary rounded-xl">
+                  <div className="p-3 bg-slate-50 border border-slate-100 text-primary">
                     <MapPin size={24} />
                   </div>
                   <div>
@@ -106,7 +106,7 @@ export const Contact = () => {
           </div>
 
           {/* Form Col */}
-          <div className="lg:w-2/3 bg-white p-6 sm:p-8 md:p-12 rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50">
+          <div className="lg:w-2/3 bg-white p-6 sm:p-8 md:p-12 rounded-none border border-slate-200 shadow-xl shadow-slate-200/40">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
@@ -116,7 +116,7 @@ export const Contact = () => {
                   <input 
                     id="name"
                     {...register("name", { required: true })}
-                    className={`text-base px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${errors.name ? 'border-red-500' : 'border-slate-200'}`}
+                    className={`text-base px-4 py-3 rounded-md border bg-slate-50 focus:bg-white focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/60 transition-all duration-200 ${errors.name ? 'border-red-500' : 'border-slate-300'} hover:border-slate-400`}
                     placeholder="Enter your name"
                   />
                 </div>
@@ -128,7 +128,7 @@ export const Contact = () => {
                     id="email"
                     type="email"
                     {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
-                    className={`text-base px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${errors.email ? 'border-red-500' : 'border-slate-200'}`}
+                    className={`text-base px-4 py-3 rounded-md border bg-slate-50 focus:bg-white focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/60 transition-all duration-200 ${errors.email ? 'border-red-500' : 'border-slate-300'} hover:border-slate-400`}
                     placeholder="you@company.com"
                   />
                 </div>
@@ -140,7 +140,7 @@ export const Contact = () => {
                     id="phone"
                     type="tel"
                     {...register("phone", { required: true })}
-                    className={`text-base px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all ${errors.phone ? 'border-red-500' : 'border-slate-200'}`}
+                    className={`text-base px-4 py-3 rounded-md border bg-slate-50 focus:bg-white focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/60 transition-all duration-200 ${errors.phone ? 'border-red-500' : 'border-slate-300'} hover:border-slate-400`}
                     placeholder="+973 XXXXXXXX"
                   />
                 </div>
@@ -151,7 +151,7 @@ export const Contact = () => {
                   <select 
                     id="service"
                     {...register("service", { required: true })}
-                    className={`text-base px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all appearance-none ${errors.service ? 'border-red-500' : 'border-slate-200'}`}
+                    className={`text-base px-4 py-3 rounded-md border bg-slate-50 focus:bg-white focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/60 transition-all duration-200 appearance-none ${errors.service ? 'border-red-500' : 'border-slate-300'} hover:border-slate-400`}
                   >
                     <option value="">Select a service...</option>
                     <option value="maintenance">Maintenance</option>
@@ -171,7 +171,7 @@ export const Contact = () => {
                   id="message"
                   rows={4}
                   {...register("message", { required: true })}
-                  className={`text-base px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-y ${errors.message ? 'border-red-500' : 'border-slate-200'}`}
+                  className={`text-base px-4 py-3 rounded-md border bg-slate-50 focus:bg-white focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/60 transition-all duration-200 resize-y ${errors.message ? 'border-red-500' : 'border-slate-300'} hover:border-slate-400`}
                   placeholder="How can our engineering team assist you?"
                 />
               </div>
