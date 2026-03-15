@@ -3,19 +3,23 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, ContactShadows, Lightformer } from '@react-three/drei';
 import { ElevatorModel } from '../canvas/ElevatorModel';
 import { Button } from '../components/ui/Button';
-import { motion } from 'framer-motion';
-import { Clock, ShieldCheck, Wrench, PhoneCall, MessageCircle } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Clock, ShieldCheck, Wrench, PhoneCall, MessageCircle, ChevronDown } from 'lucide-react';
 
 export const Hero = () => {
   const [mounted, setMounted] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
-    // Defer 3D evaluation to a macro-task so the main thread can paint the HTML instantly (fixes 20s LCP).
     const timer = setTimeout(() => setMounted(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+  const scrollToAbout = () => {
+    document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <section id="hero" className="relative min-h-screen pt-24 bg-background overflow-hidden flex items-center">
@@ -101,7 +105,7 @@ export const Hero = () => {
         </motion.div>
 
         {/* 3D Canvas Area */}
-        <div className="relative h-[38vh] sm:h-[44vh] lg:h-[80vh] w-full mt-8 lg:mt-0 touch-none rounded-2xl overflow-hidden border border-slate-200 shadow-xl">
+        <div className="relative h-[38vh] sm:h-[44vh] lg:h-[80vh] w-full mt-8 lg:mt-0 touch-none rounded-2xl overflow-hidden border border-slate-200 shadow-xl" role="img" aria-label="Interactive 3D elevator model">
           <div className="absolute inset-0 bg-gradient-to-tr from-slate-100 to-transparent opacity-50 pointer-events-none" />
           
           {/* LCP structural placeholder */}
@@ -154,6 +158,26 @@ export const Hero = () => {
         </div>
 
       </div>
+
+      {/* Scroll indicator */}
+      {!shouldReduceMotion && (
+        <motion.button
+          onClick={scrollToAbout}
+          aria-label="Scroll to About section"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors duration-200 cursor-pointer z-10"
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.6 }}
+        >
+          <span className="text-[10px] font-mono tracking-widest uppercase">Scroll</span>
+          <motion.div
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <ChevronDown size={20} aria-hidden="true" />
+          </motion.div>
+        </motion.button>
+      )}
     </section>
   );
 };

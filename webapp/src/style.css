@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 @theme {
   --color-primary: #e60000;
@@ -8,11 +9,28 @@
   --color-background: #f8fafc;
   --color-text-main: #1e293b;
   --font-sans: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
+  }
+
+  /* Accessible focus-visible ring — never remove focus outlines */
+  :focus-visible {
+    outline: 2px solid #e60000;
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Respect user motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
