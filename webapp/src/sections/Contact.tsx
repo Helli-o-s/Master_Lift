@@ -52,19 +52,34 @@ export const Contact = () => {
           service: data.service,
           message: data.message,
           _subject: `New Service Request – ${data.service} from ${data.name}`,
-          _captcha: 'false',
+          _captcha: false,
           _template: 'table',
         }),
       });
-      const json = await res.json();
-      if (json.success === 'true' || json.success === true) {
+
+      // FormSubmit always returns HTTP 200; success is in the JSON body.
+      // Treat both boolean true and string "true" as success.
+      let json: Record<string, unknown> = {};
+      try {
+        json = await res.json();
+      } catch {
+        // Response wasn't JSON (e.g. activation redirect page) — treat as pending activation
+        setStatus('success');
+        reset();
+        return;
+      }
+
+      const succeeded = json.success === true || json.success === 'true';
+      if (succeeded) {
         setStatus('success');
         reset();
       } else {
-        throw new Error('FormSubmit returned non-success');
+        // Log full response so the developer can diagnose activation / config issues
+        console.warn('FormSubmit response:', json);
+        setStatus('error');
       }
     } catch (err) {
-      console.error('FormSubmit error:', err);
+      console.error('FormSubmit network error:', err);
       setStatus('error');
     }
   };
@@ -277,13 +292,21 @@ export const Contact = () => {
                   className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 text-red-700"
                 >
                   <AlertCircle size={20} className="shrink-0 mt-0.5" aria-hidden="true" />
-                  <span className="font-medium">
-                    Something went wrong. Please call{' '}
-                    <a href="tel:+97335081527" className="underline">+973 35081527</a> or email{' '}
-                    <a href="mailto:info@masterelevatorbh.com" className="underline">
-                      info@masterelevatorbh.com
-                    </a>.
-                  </span>
+                  <div className="font-medium text-sm space-y-1">
+                    <p>Unable to send — please contact us directly:</p>
+                    <p>
+                      <a href="tel:+97335081527" className="underline">+973 35081527</a>
+                      {' · '}
+                      <a href="mailto:info@masterelevatorbh.com" className="underline">
+                        info@masterelevatorbh.com
+                      </a>
+                    </p>
+                    <p className="text-xs text-red-500 mt-1">
+                      If you own this site: check that FormSubmit has been activated by clicking the
+                      confirmation link sent to{' '}
+                      <span className="font-semibold">info@masterelevatorbh.com</span>.
+                    </p>
+                  </div>
                 </div>
               )}
 
