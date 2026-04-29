@@ -4,7 +4,9 @@ import { Mail, Phone, MapPin, Send, CheckCircle, AlertCircle, Loader2 } from 'lu
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 
-const FORMSUBMIT_EMAIL = 'info@masterelevatorbh.com';
+// Web3Forms access key — get yours free at https://web3forms.com
+// Enter info@masterelevatorbh.com there and paste the key below.
+const WEB3FORMS_KEY = 'YOUR_ACCESS_KEY_HERE';
 
 type FormData = {
   name: string;
@@ -42,40 +44,26 @@ export const Contact = () => {
   const onSubmit = async (data: FormData) => {
     setStatus('sending');
     try {
-      const res = await fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_EMAIL}`, {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
           name: data.name,
           email: data.email,
           phone: data.phone,
           service: data.service,
           message: data.message,
-          _subject: `New Service Request – ${data.service} from ${data.name}`,
-          _captcha: false,
-          _template: 'table',
+          subject: `New Service Request – ${data.service} from ${data.name}`,
         }),
       });
 
-      // FormSubmit always returns HTTP 200; success is in the JSON body.
-      // Treat both boolean true and string "true" as success.
-      let json: Record<string, unknown> = {};
-      try {
-        json = await res.json();
-      } catch {
-        // Response wasn't JSON (e.g. activation redirect page) — treat as pending activation
-        setStatus('success');
-        reset();
-        return;
-      }
-
-      const succeeded = json.success === true || json.success === 'true';
-      if (succeeded) {
+      const json: Record<string, unknown> = await res.json();
+      if (res.ok && json.success === true) {
         setStatus('success');
         reset();
       } else {
-        // Log full response so the developer can diagnose activation / config issues
-        console.warn('FormSubmit response:', json);
+        console.warn('Web3Forms response:', json);
         setStatus('error');
       }
     } catch (err) {
@@ -302,9 +290,9 @@ export const Contact = () => {
                       </a>
                     </p>
                     <p className="text-xs text-red-500 mt-1">
-                      If you own this site: check that FormSubmit has been activated by clicking the
-                      confirmation link sent to{' '}
-                      <span className="font-semibold">info@masterelevatorbh.com</span>.
+                      If you own this site: make sure the Web3Forms access key in Contact.tsx is
+                      set. Get one free at{' '}
+                      <span className="font-semibold">web3forms.com</span>.
                     </p>
                   </div>
                 </div>
